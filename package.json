@@ -1,0 +1,23 @@
+{
+  "name": "cmake-bare-bundle",
+  "version": "1.0.0",
+  "description": "Bare bundling utilities for CMake",
+  "files": [
+    "*.cmake",
+    "*.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holepunchto/cmake-bare-bundle.git"
+  },
+  "author": "Holepunch",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/holepunchto/cmake-bare-bundle/issues"
+  },
+  "homepage": "https://github.com/holepunchto/cmake-bare-bundle#readme",
+  "dependencies": {
+    "bare-dev": "^0.14.5",
+    "cmake-bare": "^1.1.4"
+  }
+}
