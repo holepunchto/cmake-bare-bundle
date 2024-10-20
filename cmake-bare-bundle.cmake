@@ -6,7 +6,7 @@ set(bare_bundle_module_dir "${CMAKE_CURRENT_LIST_DIR}")
 
 function(add_bare_bundle)
   cmake_parse_arguments(
-    PARSE_ARGV 0 ARGV "PREBUILDS;SIMULATOR" "ENTRY;OUT;CONFIG;FORMAT;PLATFORM;ARCH;WORKING_DIRECTORY" "DEPENDS"
+    PARSE_ARGV 0 ARGV "SIMULATOR" "ENTRY;OUT;PLATFORM;ARCH;WORKING_DIRECTORY" "DEPENDS"
   )
 
   if(ARGV_WORKING_DIRECTORY)
@@ -15,30 +15,16 @@ function(add_bare_bundle)
     set(ARGV_WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
   endif()
 
-  if(ARGV_CONFIG)
-    cmake_path(ABSOLUTE_PATH ARGV_CONFIG BASE_DIRECTORY "${ARGV_WORKING_DIRECTORY}" NORMALIZE)
-
-    list(APPEND ARGV_DEPENDS "${ARGV_CONFIG}")
+  if(ARGV_ENTRY)
+    cmake_path(ABSOLUTE_PATH ARGV_ENTRY BASE_DIRECTORY "${ARGV_WORKING_DIRECTORY}" NORMALIZE)
   else()
-    set(ARGV_CONFIG "0")
-  endif()
-
-  if(DEFINED ARGV_FORMAT)
-    string(TOLOWER ${ARGV_FORMAT} ARGV_FORMAT)
-  else()
-    set(ARGV_FORMAT "0")
+    message(FATAL_ERROR "Argument ENTRY not provided")
   endif()
 
   if(ARGV_OUT)
     cmake_path(ABSOLUTE_PATH ARGV_OUT BASE_DIRECTORY "${ARGV_WORKING_DIRECTORY}" NORMALIZE)
   else()
     message(FATAL_ERROR "Argument OUT not provided")
-  endif()
-
-  if(ARGV_ENTRY)
-    cmake_path(ABSOLUTE_PATH ARGV_ENTRY BASE_DIRECTORY "${ARGV_WORKING_DIRECTORY}" NORMALIZE)
-  else()
-    message(FATAL_ERROR "Argument ENTRY not provided")
   endif()
 
   if(NOT DEFINED ARGV_PLATFORM)
@@ -59,11 +45,8 @@ function(add_bare_bundle)
 
   set(args
     "${ARGV_WORKING_DIRECTORY}"
-    "${ARGV_CONFIG}"
-    "${ARGV_FORMAT}"
-    "$<BOOL:${ARGV_PREBUILDS}>"
-    "${ARGV_OUT}"
     "${ARGV_ENTRY}"
+    "${ARGV_OUT}"
     "${ARGV_PLATFORM}"
     "${ARGV_ARCH}"
     "$<BOOL:${ARGV_SIMULATOR}>"
