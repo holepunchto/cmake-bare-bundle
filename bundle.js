@@ -30,13 +30,10 @@ async function bundle (entry) {
   const bundler = new DriveBundler(drive, {
     cwd,
     host,
+    prebuilds: false,
     packages: true,
     inlineAssets: true
   })
-
-  if (bundler.prebuilds) {
-    await fs.mkdir(bundler.prebuilds, { recursive: true })
-  }
 
   entry = pathResolve('/', path.relative(cwd, entry))
 
