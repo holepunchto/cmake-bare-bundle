@@ -9,6 +9,7 @@ const [
   entry,
   out,
   builtins,
+  linked,
   platform,
   arch,
   simulator
@@ -22,7 +23,8 @@ async function dependencies (entry) {
     arch,
     simulator,
     resolve: resolve.bare,
-    builtins: builtins === '0' ? [] : require(builtins)
+    builtins: builtins === '0' ? [] : require(builtins),
+    linked: linked !== '0'
   }, fs.readModule, fs.listPrefix)
 
   bundle = bundle.unmount(pathToFileURL('.'))

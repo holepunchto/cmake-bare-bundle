@@ -6,7 +6,7 @@ set(bare_bundle_module_dir "${CMAKE_CURRENT_LIST_DIR}")
 
 function(add_bare_bundle target)
   cmake_parse_arguments(
-    PARSE_ARGV 1 ARGV "SIMULATOR" "ENTRY;OUT;BUILTINS;PLATFORM;ARCH;WORKING_DIRECTORY" "DEPENDS"
+    PARSE_ARGV 1 ARGV "LINKED;SIMULATOR" "ENTRY;OUT;BUILTINS;PLATFORM;ARCH;WORKING_DIRECTORY" "DEPENDS"
   )
 
   if(ARGV_WORKING_DIRECTORY)
@@ -52,6 +52,7 @@ function(add_bare_bundle target)
   set(args
     "${ARGV_ENTRY}"
     "${ARGV_OUT}"
+    "$<BOOL:${ARGV_LINKED}>"
     "${ARGV_BUILTINS}"
     "${ARGV_PLATFORM}"
     "${ARGV_ARCH}"
