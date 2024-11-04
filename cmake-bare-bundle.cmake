@@ -4,9 +4,9 @@ find_package(cmake-bare REQUIRED PATHS node_modules/cmake-bare)
 
 set(bare_bundle_module_dir "${CMAKE_CURRENT_LIST_DIR}")
 
-function(add_bare_bundle)
+function(add_bare_bundle target)
   cmake_parse_arguments(
-    PARSE_ARGV 0 ARGV "SIMULATOR" "ENTRY;OUT;PLATFORM;ARCH;WORKING_DIRECTORY" "DEPENDS"
+    PARSE_ARGV 1 ARGV "SIMULATOR" "ENTRY;OUT;BUILTINS;PLATFORM;ARCH;WORKING_DIRECTORY" "DEPENDS"
   )
 
   if(ARGV_WORKING_DIRECTORY)
@@ -27,6 +27,12 @@ function(add_bare_bundle)
     message(FATAL_ERROR "Argument OUT not provided")
   endif()
 
+  if(ARGV_BUILTINS)
+    cmake_path(ABSOLUTE_PATH ARGV_BUILTINS BASE_DIRECTORY "${ARGV_WORKING_DIRECTORY}" NORMALIZE)
+  else()
+    set(ARGV_BUILTINS 0)
+  endif()
+
   if(NOT DEFINED ARGV_PLATFORM)
     bare_platform(ARGV_PLATFORM)
   endif()
@@ -39,14 +45,14 @@ function(add_bare_bundle)
     bare_simulator(ARGV_SIMULATOR)
   endif()
 
-  list(APPEND ARGV_DEPENDS "${ARGV_ENTRY}")
+  list(APPEND ARGV_DEPENDS "${ARGV_ENTRY}" "${ARGV_BUILTINS}")
 
   list(REMOVE_DUPLICATES ARGV_DEPENDS)
 
   set(args
-    "${ARGV_WORKING_DIRECTORY}"
     "${ARGV_ENTRY}"
     "${ARGV_OUT}"
+    "${ARGV_BUILTINS}"
     "${ARGV_PLATFORM}"
     "${ARGV_ARCH}"
     "$<BOOL:${ARGV_SIMULATOR}>"
@@ -83,13 +89,9 @@ function(add_bare_bundle)
     VERBATIM
   )
 
-  if(DEFINED ARGV_UNPARSED_ARGUMENTS)
-    list(POP_FRONT ARGV_UNPARSED_ARGUMENTS target)
-
-    add_custom_target(
-      ${target}
-      ALL
-      DEPENDS "${ARGV_OUT}"
-    )
-  endif()
+  add_custom_target(
+    ${target}
+    ALL
+    DEPENDS "${ARGV_OUT}"
+  )
 endfunction()

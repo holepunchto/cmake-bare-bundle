@@ -20,12 +20,12 @@
   },
   "homepage": "https://github.com/holepunchto/cmake-bare-bundle#readme",
   "dependencies": {
-    "bare-bundle": "^1.7.1",
+    "bare-bundle": "^1.8.0",
+    "bare-bundle-compile": "^1.0.0",
+    "bare-module-traverse": "^1.2.4",
+    "bare-pack": "^1.0.0",
     "cmake-bare": "^1.1.4",
-    "drive-bundler": "^2.3.4",
-    "include-static": "^1.1.0",
-    "localdrive": "^1.12.1",
-    "unix-path-resolve": "^1.0.2"
+    "include-static": "^1.1.0"
   },
   "devDependencies": {
     "standard": "^17.1.2"

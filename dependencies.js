@@ -1,14 +1,14 @@
-const fs = require('fs/promises')
 const process = require('process')
 const path = require('path')
-const pathResolve = require('unix-path-resolve')
-const Localdrive = require('localdrive')
-const DriveBundler = require('drive-bundler')
+const { pathToFileURL } = require('url')
+const { resolve } = require('bare-module-traverse')
+const pack = require('bare-pack')
+const fs = require('bare-pack/fs')
 
 const [
-  cwd,
   entry,
   out,
+  builtins,
   platform,
   arch,
   simulator
@@ -17,20 +17,20 @@ const [
 dependencies(entry)
 
 async function dependencies (entry) {
-  const host = `${platform}-${arch}${simulator ? '-simulator' : ''}`
+  let bundle = await pack(pathToFileURL(entry), {
+    platform,
+    arch,
+    simulator,
+    resolve: resolve.bare,
+    builtins: builtins === '0' ? [] : require(builtins)
+  }, fs.readModule, fs.listPrefix)
 
-  const drive = new Localdrive(cwd, { followLinks: true })
-
-  const bundler = new DriveBundler(drive, { cwd, host, packages: true, prebuilds: false })
-
-  entry = pathResolve('/', path.relative(cwd, entry))
-
-  const { sources } = await bundler.bundle(entry)
+  bundle = bundle.unmount(pathToFileURL('.'))
 
   const result = Object
-    .keys(sources)
-    .map((file) => path.join(cwd, path.normalize(file)))
+    .keys(bundle.files)
+    .map((file) => path.resolve('.' + file))
     .sort()
 
-  await fs.writeFile(path.resolve(cwd, `${out}.d`), `${path.resolve(cwd, out)}: ${result.join(' ')}\n`)
+  await fs.writeFile(pathToFileURL(`${out}.d`), `${path.resolve(out)}: ${result.join(' ')}\n`)
 }

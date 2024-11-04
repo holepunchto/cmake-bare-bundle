@@ -1,16 +1,16 @@
-const fs = require('fs/promises')
 const process = require('process')
 const path = require('path')
-const pathResolve = require('unix-path-resolve')
+const { pathToFileURL } = require('url')
+const { resolve } = require('bare-module-traverse')
+const pack = require('bare-pack')
+const fs = require('bare-pack/fs')
+const compile = require('bare-bundle-compile')
 const includeStatic = require('include-static')
-const Bundle = require('bare-bundle')
-const Localdrive = require('localdrive')
-const DriveBundler = require('drive-bundler')
 
 const [
-  cwd,
   entry,
   out,
+  builtins,
   platform,
   arch,
   simulator
@@ -23,19 +23,15 @@ async function bundle (entry) {
 
   const format = defaultFormat(out)
 
-  const host = `${platform}-${arch}${simulator ? '-simulator' : ''}`
+  let bundle = await pack(pathToFileURL(entry), {
+    platform,
+    arch,
+    simulator,
+    resolve: resolve.bare,
+    builtins: builtins !== '0' ? require(builtins) : []
+  }, fs.readModule, fs.listPrefix)
 
-  const drive = new Localdrive(cwd, { followLinks: true })
-
-  const bundler = new DriveBundler(drive, {
-    cwd,
-    host,
-    prebuilds: false,
-    packages: true,
-    inlineAssets: true
-  })
-
-  entry = pathResolve('/', path.relative(cwd, entry))
+  bundle = bundle.unmount(pathToFileURL('.'))
 
   let data
 
@@ -45,41 +41,17 @@ async function bundle (entry) {
     case 'bundle.cjs':
     case 'bundle.mjs':
     case 'bundle.json':
-    case 'bundle.h': {
-      const result = await bundler.bundle(entry)
-
-      const { entrypoint, resolutions, sources, assets } = result
-
-      const bundle = new Bundle()
-
-      bundle.id = DriveBundler.id(result).toString('hex')
-      bundle.main = entrypoint
-      bundle.resolutions = resolutions
-
-      for (const key in sources) {
-        bundle.write(key, sources[key])
-      }
-
-      for (const key in assets) {
-        const asset = assets[key]
-
-        bundle.write(key, asset.value, { executable: asset.executable, asset: true })
-      }
-
+    case 'bundle.h':
       data = bundle.toBuffer()
       break
-    }
 
     case 'js':
-    case 'js.h':{
-      const code = await bundler.stringify(entry)
-
-      data = Buffer.from(code)
+    case 'js.h':
+      data = Buffer.from(compile(bundle))
       break
-    }
 
     default:
-      throw new Error(`unknown format "${format}"`)
+      throw new Error(`Unknown format '${format}'`)
   }
 
   switch (format) {
@@ -102,7 +74,7 @@ async function bundle (entry) {
       break
   }
 
-  await fs.writeFile(path.resolve(cwd, out), data)
+  await fs.writeFile(pathToFileURL(out), data)
 }
 
 function defaultFormat (out) {
