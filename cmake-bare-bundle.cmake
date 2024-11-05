@@ -52,8 +52,8 @@ function(add_bare_bundle target)
   set(args
     "${ARGV_ENTRY}"
     "${ARGV_OUT}"
-    "$<BOOL:${ARGV_LINKED}>"
     "${ARGV_BUILTINS}"
+    "$<BOOL:${ARGV_LINKED}>"
     "${ARGV_PLATFORM}"
     "${ARGV_ARCH}"
     "$<BOOL:${ARGV_SIMULATOR}>"
