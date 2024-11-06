@@ -20,9 +20,8 @@ const [
 bundle(entry)
 
 async function bundle (entry) {
-  const encoding = 'utf8'
-
   const format = defaultFormat(out)
+  const encoding = 'utf8'
 
   let bundle = await pack(pathToFileURL(entry), {
     platform,
@@ -39,37 +38,30 @@ async function bundle (entry) {
 
   switch (format) {
     case 'bundle':
-    case 'bundle.js':
     case 'bundle.cjs':
     case 'bundle.mjs':
     case 'bundle.json':
     case 'bundle.h':
       data = bundle.toBuffer()
       break
-
     case 'js':
     case 'js.h':
       data = Buffer.from(compile(bundle))
       break
-
     default:
       throw new Error(`Unknown format '${format}'`)
   }
 
   switch (format) {
-    case 'bundle.js':
     case 'bundle.cjs':
       data = `module.exports = ${JSON.stringify(data.toString(encoding))}\n`
       break
-
     case 'bundle.mjs':
       data = `export default ${JSON.stringify(data.toString(encoding))}\n`
       break
-
     case 'bundle.json':
       data = JSON.stringify(data.toString(encoding)) + '\n'
       break
-
     case 'bundle.h':
     case 'js.h':
       data = includeStatic(defaultName(out), data)
@@ -80,9 +72,8 @@ async function bundle (entry) {
 }
 
 function defaultFormat (out) {
-  if (out === null) return 'bundle'
-  if (out.endsWith('.bundle.js')) return 'bundle.js'
-  if (out.endsWith('.bundle.cjs')) return 'bundle.cjs'
+  if (typeof out !== 'string') return 'bundle'
+  if (out.endsWith('.bundle.js') || out.endsWith('.bundle.cjs')) return 'bundle.cjs'
   if (out.endsWith('.bundle.mjs')) return 'bundle.mjs'
   if (out.endsWith('.bundle.json')) return 'bundle.json'
   if (out.endsWith('.bundle.h')) return 'bundle.h'
