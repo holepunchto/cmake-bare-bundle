@@ -17,6 +17,8 @@ function(add_bare_bundle target)
 
   if(ARGV_ENTRY)
     cmake_path(ABSOLUTE_PATH ARGV_ENTRY BASE_DIRECTORY "${ARGV_WORKING_DIRECTORY}" NORMALIZE)
+
+    list(APPEND ARGV_DEPENDS "${ARGV_ENTRY}")
   else()
     message(FATAL_ERROR "Argument ENTRY not provided")
   endif()
@@ -29,6 +31,8 @@ function(add_bare_bundle target)
 
   if(ARGV_BUILTINS)
     cmake_path(ABSOLUTE_PATH ARGV_BUILTINS BASE_DIRECTORY "${ARGV_WORKING_DIRECTORY}" NORMALIZE)
+
+    list(APPEND ARGV_DEPENDS "${ARGV_BUILTINS}")
   else()
     set(ARGV_BUILTINS 0)
   endif()
@@ -44,8 +48,6 @@ function(add_bare_bundle target)
   if(NOT DEFINED ARGV_SIMULATOR)
     bare_simulator(ARGV_SIMULATOR)
   endif()
-
-  list(APPEND ARGV_DEPENDS "${ARGV_ENTRY}" "${ARGV_BUILTINS}")
 
   list(REMOVE_DUPLICATES ARGV_DEPENDS)
 
