@@ -7,30 +7,28 @@ const fs = require('bare-pack/fs')
 const compile = require('bare-bundle-compile')
 const includeStatic = require('include-static')
 
-const [
-  entry,
-  out,
-  builtins,
-  linked,
-  platform,
-  arch,
-  simulator
-] = process.argv.slice(2)
+const [entry, out, builtins, linked, platform, arch, simulator] =
+  process.argv.slice(2)
 
 bundle(entry)
 
-async function bundle (entry) {
+async function bundle(entry) {
   const format = defaultFormat(out)
   const encoding = 'utf8'
 
-  let bundle = await pack(pathToFileURL(entry), {
-    platform,
-    arch,
-    simulator,
-    resolve: resolve.bare,
-    builtins: builtins !== '0' ? require(builtins) : [],
-    linked: linked !== '0'
-  }, fs.readModule, fs.listPrefix)
+  let bundle = await pack(
+    pathToFileURL(entry),
+    {
+      platform,
+      arch,
+      simulator,
+      resolve: resolve.bare,
+      builtins: builtins !== '0' ? require(builtins) : [],
+      linked: linked !== '0'
+    },
+    fs.readModule,
+    fs.listPrefix
+  )
 
   bundle = bundle.unmount(pathToFileURL('.'))
 
@@ -71,9 +69,10 @@ async function bundle (entry) {
   await fs.writeFile(pathToFileURL(out), data)
 }
 
-function defaultFormat (out) {
+function defaultFormat(out) {
   if (typeof out !== 'string') return 'bundle'
-  if (out.endsWith('.bundle.js') || out.endsWith('.bundle.cjs')) return 'bundle.cjs'
+  if (out.endsWith('.bundle.js') || out.endsWith('.bundle.cjs'))
+    return 'bundle.cjs'
   if (out.endsWith('.bundle.mjs')) return 'bundle.mjs'
   if (out.endsWith('.bundle.json')) return 'bundle.json'
   if (out.endsWith('.bundle.h')) return 'bundle.h'
@@ -82,9 +81,10 @@ function defaultFormat (out) {
   return 'bundle'
 }
 
-function defaultName (out) {
+function defaultName(out) {
   if (out === null) return 'bundle'
-  return path.basename(out)
+  return path
+    .basename(out)
     .replace(/\.h$/, '')
     .replace(/[-.]+/g, '_')
     .toLowerCase()
