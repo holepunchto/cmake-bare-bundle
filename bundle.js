@@ -21,7 +21,7 @@ async function bundle(entry) {
     {
       platform,
       arch,
-      simulator,
+      simulator: simulator !== '0',
       resolve: resolve.bare,
       builtins: builtins !== '0' ? require(builtins) : [],
       linked: linked !== '0'
