@@ -1,6 +1,6 @@
 {
   "name": "cmake-bare-bundle",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "Bare bundling utilities for CMake",
   "files": [
     "*.cmake",
