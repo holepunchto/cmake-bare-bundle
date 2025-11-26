@@ -1,9 +1,10 @@
 const process = require('process')
 const path = require('path')
+const fs = require('fs')
 const { pathToFileURL } = require('url')
 const { resolve } = require('bare-module-traverse')
 const pack = require('bare-pack')
-const fs = require('bare-pack/fs')
+const { readModule, listPrefix } = require('bare-pack/fs')
 
 const [entry, out, builtins, linked, platform, arch, simulator] =
   process.argv.slice(2)
@@ -21,8 +22,8 @@ async function dependencies(entry) {
       builtins: builtins === '0' ? [] : require(builtins),
       linked: linked !== '0'
     },
-    fs.readModule,
-    fs.listPrefix
+    readModule,
+    listPrefix
   )
 
   bundle = bundle.unmount(pathToFileURL('.'))
@@ -31,8 +32,5 @@ async function dependencies(entry) {
     .map((file) => path.resolve('.' + file))
     .sort()
 
-  await fs.writeFile(
-    pathToFileURL(`${out}.d`),
-    `${path.resolve(out)}: ${result.join(' ')}\n`
-  )
+  fs.writeFileSync(`${out}.d`, `${path.resolve(out)}: ${result.join(' ')}\n`)
 }

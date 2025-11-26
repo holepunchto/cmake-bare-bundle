@@ -1,9 +1,10 @@
 const process = require('process')
 const path = require('path')
+const fs = require('fs')
 const { pathToFileURL } = require('url')
 const { resolve } = require('bare-module-traverse')
 const pack = require('bare-pack')
-const fs = require('bare-pack/fs')
+const { readModule, listPrefix } = require('bare-pack/fs')
 const compile = require('bare-bundle-compile')
 const includeStatic = require('include-static')
 
@@ -26,8 +27,8 @@ async function bundle(entry) {
       builtins: builtins !== '0' ? require(builtins) : [],
       linked: linked !== '0'
     },
-    fs.readModule,
-    fs.listPrefix
+    readModule,
+    listPrefix
   )
 
   bundle = bundle.unmount(pathToFileURL('.'))
@@ -66,7 +67,7 @@ async function bundle(entry) {
       break
   }
 
-  await fs.writeFile(pathToFileURL(out), data)
+  fs.writeFileSync(out, data)
 }
 
 function defaultFormat(out) {
