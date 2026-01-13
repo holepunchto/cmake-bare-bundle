@@ -5,8 +5,24 @@ find_package(cmake-bare REQUIRED PATHS node_modules/cmake-bare)
 set(bare_bundle_module_dir "${CMAKE_CURRENT_LIST_DIR}")
 
 function(add_bare_bundle target)
+  set(option_keywords
+    LINKED
+  )
+
+  set(one_value_keywords
+    ENTRY
+    OUT
+    BUILTINS
+    HOST
+    WORKING_DIRECTORY
+  )
+
+  set(multi_value_keywords
+    DEPENDS
+  )
+
   cmake_parse_arguments(
-    PARSE_ARGV 1 ARGV "LINKED;SIMULATOR" "ENTRY;OUT;BUILTINS;PLATFORM;ARCH;WORKING_DIRECTORY" "DEPENDS"
+    PARSE_ARGV 1 ARGV "${option_keywords}" "${one_value_keywords}" "${multi_value_keywords}"
   )
 
   if(ARGV_WORKING_DIRECTORY)
@@ -37,16 +53,8 @@ function(add_bare_bundle target)
     set(ARGV_BUILTINS 0)
   endif()
 
-  if(NOT DEFINED ARGV_PLATFORM)
-    bare_platform(ARGV_PLATFORM)
-  endif()
-
-  if(NOT DEFINED ARGV_ARCH)
-    bare_arch(ARGV_ARCH)
-  endif()
-
-  if(NOT DEFINED ARGV_SIMULATOR)
-    bare_simulator(ARGV_SIMULATOR)
+  if(NOT DEFINED ARGV_HOST)
+    bare_target(ARGV_HOST)
   endif()
 
   list(REMOVE_DUPLICATES ARGV_DEPENDS)
@@ -56,9 +64,7 @@ function(add_bare_bundle target)
     "${ARGV_OUT}"
     "${ARGV_BUILTINS}"
     "$<BOOL:${ARGV_LINKED}>"
-    "${ARGV_PLATFORM}"
-    "${ARGV_ARCH}"
-    "$<BOOL:${ARGV_SIMULATOR}>"
+    "${ARGV_HOST}"
   )
 
   if(CMAKE_HOST_WIN32)

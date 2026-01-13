@@ -22,8 +22,8 @@
   "dependencies": {
     "bare-bundle": "^1.8.0",
     "bare-bundle-compile": "^1.0.0",
-    "bare-module-traverse": "^1.2.4",
-    "bare-pack": "^1.0.0",
+    "bare-module-traverse": "^2.0.0",
+    "bare-pack": "^2.0.0",
     "cmake-bare": "^1.1.4",
     "include-static": "^1.1.0"
   },

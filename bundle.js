@@ -8,8 +8,7 @@ const { readModule, listPrefix } = require('bare-pack/fs')
 const compile = require('bare-bundle-compile')
 const includeStatic = require('include-static')
 
-const [entry, out, builtins, linked, platform, arch, simulator] =
-  process.argv.slice(2)
+const [entry, out, builtins, linked, host] = process.argv.slice(2)
 
 bundle(entry)
 
@@ -20,9 +19,7 @@ async function bundle(entry) {
   let bundle = await pack(
     pathToFileURL(entry),
     {
-      platform,
-      arch,
-      simulator: simulator !== '0',
+      host,
       resolve: resolve.bare,
       builtins: builtins !== '0' ? require(builtins) : [],
       linked: linked !== '0'
