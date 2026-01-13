@@ -69,8 +69,7 @@ async function bundle(entry) {
 
 function defaultFormat(out) {
   if (typeof out !== 'string') return 'bundle'
-  if (out.endsWith('.bundle.js') || out.endsWith('.bundle.cjs'))
-    return 'bundle.cjs'
+  if (out.endsWith('.bundle.js') || out.endsWith('.bundle.cjs')) return 'bundle.cjs'
   if (out.endsWith('.bundle.mjs')) return 'bundle.mjs'
   if (out.endsWith('.bundle.json')) return 'bundle.json'
   if (out.endsWith('.bundle.h')) return 'bundle.h'
@@ -81,9 +80,5 @@ function defaultFormat(out) {
 
 function defaultName(out) {
   if (out === null) return 'bundle'
-  return path
-    .basename(out)
-    .replace(/\.h$/, '')
-    .replace(/[-.]+/g, '_')
-    .toLowerCase()
+  return path.basename(out).replace(/\.h$/, '').replace(/[-.]+/g, '_').toLowerCase()
 }
