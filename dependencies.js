@@ -4,7 +4,7 @@ const fs = require('fs')
 const { pathToFileURL } = require('url')
 const { resolve } = require('bare-module-traverse')
 const pack = require('bare-pack')
-const { readModule, listPrefix } = require('bare-pack/fs')
+const { readModule, listPrefix, resolveModule } = require('bare-pack/fs')
 
 const [entry, out, builtins, linked, host] = process.argv.slice(2)
 
@@ -20,7 +20,8 @@ async function dependencies(entry) {
       linked: linked !== '0'
     },
     readModule,
-    listPrefix
+    listPrefix,
+    resolveModule
   )
 
   bundle = bundle.unmount(pathToFileURL('.'))
