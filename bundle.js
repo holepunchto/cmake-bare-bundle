@@ -6,7 +6,6 @@ const { resolve } = require('bare-module-traverse')
 const pack = require('bare-pack')
 const { readModule, listPrefix } = require('bare-pack/fs')
 const compile = require('bare-bundle-compile')
-const includeStatic = require('include-static')
 
 const [entry, out, builtins, linked, host] = process.argv.slice(2)
 
@@ -60,11 +59,32 @@ async function bundle(entry) {
       break
     case 'bundle.h':
     case 'js.h':
-      data = includeStatic(defaultName(out), data)
+      data = toHeader(defaultName(out), data)
       break
   }
 
   fs.writeFileSync(out, data)
+}
+
+// The data is declared `const` so that it stays in read-only memory, such as the
+// flash of a microcontroller, rather than being copied into RAM.
+function toHeader(name, data) {
+  const rows = []
+
+  for (let i = 0; i < data.byteLength; i += 16) {
+    const row = Array.from(
+      data.subarray(i, i + 16),
+      (byte) => '0x' + byte.toString(16).padStart(2, '0')
+    )
+
+    rows.push('  ' + row.join(', '))
+  }
+
+  return (
+    '#include <stddef.h>\n\n' +
+    `const unsigned char ${name}[] = {\n${rows.join(',\n')}\n};\n\n` +
+    `const size_t ${name}_len = ${data.byteLength};\n`
+  )
 }
 
 function defaultFormat(out) {
