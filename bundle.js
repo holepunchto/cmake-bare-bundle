@@ -6,8 +6,9 @@ const { resolve } = require('bare-module-traverse')
 const pack = require('bare-pack')
 const { readModule, listPrefix } = require('bare-pack/fs')
 const compile = require('bare-bundle-compile')
+const compress = require('bare-bundle-compress')
 
-const [entry, out, builtins, linked, host] = process.argv.slice(2)
+const [entry, out, builtins, host, linked, compressed] = process.argv.slice(2)
 
 bundle(entry)
 
@@ -28,6 +29,8 @@ async function bundle(entry) {
   )
 
   bundle = bundle.unmount(pathToFileURL('.'))
+
+  if (compressed === '1') bundle = compress(bundle)
 
   let data
 
