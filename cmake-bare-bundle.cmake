@@ -7,6 +7,7 @@ set(bare_bundle_module_dir "${CMAKE_CURRENT_LIST_DIR}")
 function(add_bare_bundle target)
   set(option_keywords
     LINKED
+    COMPRESSED
   )
 
   set(one_value_keywords
@@ -63,8 +64,9 @@ function(add_bare_bundle target)
     "${ARGV_ENTRY}"
     "${ARGV_OUT}"
     "${ARGV_BUILTINS}"
-    "$<BOOL:${ARGV_LINKED}>"
     "${ARGV_HOST}"
+    "$<BOOL:${ARGV_LINKED}>"
+    "$<BOOL:${ARGV_COMPRESSED}>"
   )
 
   if(CMAKE_HOST_WIN32)

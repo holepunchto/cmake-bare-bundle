@@ -6,7 +6,7 @@ const { resolve } = require('bare-module-traverse')
 const pack = require('bare-pack')
 const { readModule, listPrefix, resolveModule } = require('bare-pack/fs')
 
-const [entry, out, builtins, linked, host] = process.argv.slice(2)
+const [entry, out, builtins, host, linked] = process.argv.slice(2)
 
 dependencies(entry)
 
